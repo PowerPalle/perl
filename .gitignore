@@ -1,20 +1,61 @@
-/blib/
-/.build/
-_build/
-cover_db/
-inc/
-Build
-!Build/
-Build.bat
-.last_cover_stats
-/Makefile
-/Makefile.old
-/MANIFEST.bak
-/META.yml
-/META.json
-/MYMETA.*
-nytprof.out
-/pm_to_blib
-*.o
-*.bs
-/_eumm/
+#!/usr/bin/perl
+
+use CGI;
+use LWP::Simple;
+
+my $mappe = "/Users/pbn/Desktop/test";
+
+{
+	$projektnavn = "apple";
+	$wwwwhack = "http://www.apple.com/";
+	
+	print "\nFetching website ";
+	print "($wwwwhack)\n";
+	my $err = &whack($wwwwhack);
+	
+	print "Parsing file...";
+	my $dokument = "$projektnavn.html";
+	print "($dokument)\n";
+}
+
+
+
+
+#// subs
+
+sub whack {
+	local ($in_url) = @_;
+	$content = get("$in_url");
+	$len = length($content);
+	
+	print "Saving file... ";
+	print "$mappe/";
+	print "$outfilename\n";
+
+	print "Bytes recieved: ";
+	print "$len\n";
+	
+	if ($len>0)
+	{
+		@alist = stat("$mappe/$projektnavn.html");
+
+		if ($alist[7] != $len)
+		{
+			&savefile("$mappe/$projektnavn.html",$content);
+		}
+	} else
+	{
+		return -1;
+	}
+	return 0;
+}
+
+
+
+
+sub savefile {
+	local ($filename,$savestring) = @_;
+	open(FIL,">$filename");
+	print FIL $savestring;
+	close(FIL);
+}
